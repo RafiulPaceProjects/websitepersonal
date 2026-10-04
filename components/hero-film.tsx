@@ -171,8 +171,8 @@ export function HeroFilm() {
     const onMove = (event: PointerEvent) => {
       if (!card) return;
       const r = card.getBoundingClientRect();
-      const px = (event.clientX - r.left) / r.width;
-      const py = (event.clientY - r.top) / r.height;
+      const px = Math.min(1, Math.max(0, (event.clientX - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (event.clientY - r.top) / r.height));
       card.style.setProperty("--mx", `${px * 100}%`);
       card.style.setProperty("--my", `${py * 100}%`);
       gsap.to(card, {
@@ -204,10 +204,35 @@ export function HeroFilm() {
       if (photoImg)
         gsap.to(photoImg, { scale: 1, duration: 1.2, ease: "power2.out" });
     };
+    // A touch press borrows the hover treatment, without capturing the pointer
+    // or preventing browser gestures. Scrolling cancels and resets the effect.
+    let touching = false;
+    const onTouchStart = (event: PointerEvent) => {
+      if (reduce || event.pointerType === "mouse") return;
+      if (event.target instanceof Element && event.target.closest("a")) return;
+      touching = true;
+      onEnter();
+      onMove(event);
+    };
+    const onTouchMove = (event: PointerEvent) => {
+      if (touching && event.pointerType !== "mouse") onMove(event);
+    };
+    const onTouchEnd = () => {
+      if (!touching) return;
+      touching = false;
+      onLeave();
+    };
     if (canHover && card) {
       card.addEventListener("pointermove", onMove);
       card.addEventListener("pointerenter", onEnter);
       card.addEventListener("pointerleave", onLeave);
+    }
+    if (!reduce && card) {
+      card.addEventListener("pointerdown", onTouchStart, { passive: true });
+      card.addEventListener("pointermove", onTouchMove, { passive: true });
+      window.addEventListener("pointerup", onTouchEnd);
+      window.addEventListener("pointercancel", onTouchEnd);
+      window.addEventListener("blur", onTouchEnd);
     }
     video.addEventListener("timeupdate", onTime);
     video.addEventListener("error", reveal);
@@ -222,6 +247,11 @@ export function HeroFilm() {
       card?.removeEventListener("pointermove", onMove);
       card?.removeEventListener("pointerenter", onEnter);
       card?.removeEventListener("pointerleave", onLeave);
+      card?.removeEventListener("pointerdown", onTouchStart);
+      card?.removeEventListener("pointermove", onTouchMove);
+      window.removeEventListener("pointerup", onTouchEnd);
+      window.removeEventListener("pointercancel", onTouchEnd);
+      window.removeEventListener("blur", onTouchEnd);
     };
   }, []);
 

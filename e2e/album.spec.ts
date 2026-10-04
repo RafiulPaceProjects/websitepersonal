@@ -1,35 +1,32 @@
 import { test, expect } from "@playwright/test";
 
-// Corner fan (hero-film.tsx): three wardrobe looks drop into the top-right
-// once the hero blur lands, then sit settled.
-test("fan drops three looks into the hero corner", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(String(error)));
+// The live profile replaces the retired three-photo fan. Check image loading
+// through responsive source changes, including a return to desktop.
+test("profile photo loads at each breakpoint and after resizing back", async ({
+  page,
+}) => {
   await page.goto("/");
-  await expect(page.locator(".intro")).toBeVisible();
-  await page.locator(".intro").click();
-  await expect(page.locator(".intro")).toHaveCount(0, { timeout: 2000 });
-
-  const photos = page.locator(".film-fan .album-photo img");
-  await expect(photos).toHaveCount(3);
-  await expect
-    .poll(
-      async () =>
-        page
-          .locator(".film-fan .album-photo")
-          .evaluateAll((els) =>
-            els.every((el) => Number(getComputedStyle(el).opacity) === 1),
-          ),
-      { timeout: 20000 },
-    )
-    .toBe(true);
-  for (let i = 0; i < 3; i += 1) {
-    await expect(photos.nth(i)).not.toHaveAttribute("alt", "");
+  const photo = page.locator(".film-portrait img");
+  await expect(photo).toHaveCount(1);
+  await expect(photo).toHaveAttribute(
+    "alt",
+    "Rafiul at a rainy window, lit by a desk lamp",
+  );
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 375, height: 667 },
+    { width: 320, height: 568 },
+    { width: 768, height: 1024 },
+    { width: 1032, height: 1376 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
     await expect
       .poll(() =>
-        photos.nth(i).evaluate((img: HTMLImageElement) => img.naturalWidth),
+        photo.evaluate(
+          (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
+        ),
       )
-      .toBeGreaterThan(0);
+      .toBe(true);
   }
-  expect(errors).toEqual([]);
 });

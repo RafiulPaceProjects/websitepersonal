@@ -29,11 +29,17 @@ Open `http://localhost:3000`. No `.env` file or environment variables are requir
 - `public/` — static assets served from the site root.
 - `e2e/` — browser-level checks.
 
-GSAP is installed but not used yet. shadcn/ui is initialized with a base-nova setup and local Button/Separator components. The Aceternity registry is configured for optional component installs; no Aceternity components have been added. HeroUI is not installed. See `../Website Docs/Architecture/Portfolio-Codebase-Guide.md` for file responsibilities, current gaps, and how the pieces fit together. Before changing Next.js app code, follow the instructions in `AGENTS.md` and consult the installed Next.js 16 docs.
+GSAP drives the film arrival, loader and profile-card feedback. A small CSS float composes with its transforms and pauses while the card is hovered or pressed. Reduced motion disables both effects. shadcn/ui uses the existing base-nova setup; no new UI library is needed for these interactions. Before changing Next.js app code, follow `AGENTS.md` and consult the installed Next.js docs.
+
+## Browser checks
+
+`npm run test:e2e` covers the current homepage, loader symmetry, responsive photo loading, video failure, reduced motion and contact destinations. The mobile interaction suite also tests native touch press/release, swipe scrolling, cancellation, social-link taps, idle float and desktop hover. Phone, Fold, iPad and Surface viewport checks verify readable text and reachable links. These are Chromium emulation tests; physical Safari testing remains a separate check.
+
+Run `npx playwright install chromium` once if the test browser is missing. Playwright starts the dev server automatically when needed. On failure, inspect `playwright-report/` and `test-results/`; use `npx playwright show-report` to open the report.
 
 ## Deploying
 
-Every push to `main` runs `.github/workflows/pages.yml`, which builds a static export and publishes it to GitHub Pages in about two minutes.
+Every push to `main` runs `.github/workflows/pages.yml`. Lint, TypeScript and the full Playwright suite must pass before the static export is built and published. Failed browser tests are uploaded as a GitHub Actions artifact for seven days.
 
 The Pages build sets `GITHUB_PAGES=true`, which turns on `output: "export"`, serves the site under `/websitepersonal`, and ships images unoptimized (see `next.config.ts`). Local dev is unchanged.
 
