@@ -480,13 +480,10 @@ body {
   display: grid;
   justify-items: center;
   gap: 0.75rem;
-  /* Optical centre: the clip has ~12% empty space under his feet, so drop the
-     group by half of that (6% of the figure's height = 3% of its width). */
-  transform: translateY(calc(min(17rem, 80vw) * 0.03));
 }
 .intro-status {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -590,6 +587,9 @@ body {
   max-width: 44rem;
   padding-bottom: 6.5rem;
 }
+.film-profile {
+  display: contents;
+}
 .film-kicker {
   margin: 0 0 0.75rem;
   font-family: var(--font-mono);
@@ -603,21 +603,29 @@ body {
   font-size: clamp(2rem, 5.2vw, 3.75rem);
   line-height: 1.08;
   text-wrap: balance;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 .film-sub {
   margin: 1rem 0 0;
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: 1rem;
+  max-width: 38ch;
+  line-height: 1.65;
   letter-spacing: 0.02em;
   opacity: 0.8;
 }
 .film-cta {
-  margin: 1.25rem 0 0;
+  margin: 1.75rem 0 0;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   letter-spacing: 0.02em;
 }
 .film-cta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 0.3em;
@@ -744,7 +752,7 @@ body {
   font-size: 0.8125rem;
   color: rgb(239 230 214 / 0.78);
 }
-.film-card-where .type-caret {
+.film-where.film-card-where .type-caret {
   display: none; /* its own row left a hole under the lines */
 }
 .film-card-foot {
@@ -807,7 +815,7 @@ body {
 /* Laptop and up: the card spans the right half, a horizontal spread with the
    photo filling the left column and the text column on the right. The copy on
    the left stops short of it. */
-@media (min-width: 1181px) {
+@media (min-width: 1181px) and (pointer: fine) {
   .film-card {
     top: clamp(5.5rem, 11vh, 7rem);
     bottom: clamp(5rem, 12vh, 7.5rem);
@@ -854,33 +862,45 @@ body {
     font-size: clamp(2.5rem, 1.4rem + 2.6vw, 4.25rem);
   }
 }
-/* In-between widths: the copy column stops short of the card. */
-@media (min-width: 901px) and (max-width: 1180px) {
-  .film-bottom {
-    max-width: calc(100% - clamp(300px, 27vw, 430px) - clamp(2rem, 6vw, 5rem));
+/* Phones and tablets: a centered horizontal card, then the introduction.
+   The desktop split needs more space than a portrait iPad or Surface provides. */
+@media (max-width: 1180px), (pointer: coarse) {
+  /* Three zones: navigation, a centered profile, and the introduction.
+     Natural flow lets small phones scroll instead of shrinking the copy. */
+  .page {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
   }
-  .film-headline {
-    font-size: clamp(2rem, 1.2rem + 3vw, 3.25rem);
-  }
-}
-/* Phone: a compact horizontal card under the nav so the headline stays on the
-   first screen. Photo left (portrait crop), text right. */
-@media (max-width: 900px) {
-  /* The card floats centered in the space between the nav and the copy, so
-     it never crowds the nav and never leaves a hole above the headline. */
   .film-ui {
     justify-content: flex-start;
-    gap: 1rem;
+    gap: 1.5rem;
+    padding-block: 1.5rem 2.5rem;
   }
-  .film-card {
-    margin-block: auto;
+  .film-profile {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    min-height: 22rem;
+  }
+  .film-top {
+    justify-content: center;
+  }
+  .film-nav {
+    padding-block: 0;
+  }
+  .film-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    white-space: nowrap;
   }
   .film-card {
     position: relative;
     top: auto;
     right: auto;
     width: 100%;
-    grid-template-columns: 38% 1fr;
+    grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
     grid-template-rows: auto auto;
     column-gap: 0.875rem;
     row-gap: 0.625rem;
@@ -904,23 +924,29 @@ body {
     font-size: 1.25rem;
   }
   .film-card-title {
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
   }
   .film-card-label {
     font-size: 0.625rem;
     letter-spacing: 0.06em;
   }
   .film-where.film-card-where {
-    font-size: 0.6875rem;
-    padding-top: 0.125rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+    padding-top: 0.75rem;
+    min-height: 5.25em;
   }
   .film-card-foot {
     grid-column: 1 / -1;
-    gap: 1rem;
+    gap: 0.875rem;
     padding: 0.25rem 0.125rem 0;
   }
   .film-card-foot a {
     font-size: 0.6875rem;
+    min-height: 44px;
+    align-items: center;
+    white-space: nowrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1124,10 +1150,9 @@ body {
   font-size: clamp(0.6875rem, 0.75rem + 0.8vw, 0.875rem);
   letter-spacing: 0.02em;
   white-space: nowrap;
-  /* Left edge anchored to the orb: every phrase starts the same distance
-     from it, and the fixed width keeps the orb from ever shifting. */
-  text-align: left;
-  width: 20ch; /* exactly the longest phrase, so the row centres on screen */
+  /* One center axis for the orb, every phrase, and the walking person. */
+  text-align: center;
+  width: 26ch;
   min-height: 1.2em;
 }
 /* 2:1 crop of the walk loop, sized in rem so it scales with the root type size. */
@@ -1464,27 +1489,30 @@ body {
   }
 }
 
-/* Phones and portrait tablets: type scales with width AND height so short
-   phones (iPhone SE) still fit on one screen; the card grows a little on tablets. */
-@media (max-width: 900px) {
+/* Readable type at every phone height; extra content can scroll naturally. */
+@media (max-width: 1180px), (pointer: coarse) {
   .film-card {
     max-width: 640px;
   }
   .film-headline {
-    font-size: clamp(1.625rem, min(7.2vw, 5.2vh), 3rem);
-    line-height: 1.08;
+    font-size: clamp(1.75rem, 7.8vw, 3rem);
+    line-height: 1.15;
   }
   .film-sub {
-    font-size: clamp(0.75rem, min(3.4vw, 2vh), 0.9375rem);
-    line-height: 1.55;
+    font-size: 1rem;
+    line-height: 1.65;
   }
   .film-bottom {
-    padding-bottom: clamp(3.5rem, 9vh, 6.5rem);
+    padding-bottom: 0;
+    width: 100%;
+    max-width: 640px;
+    align-self: center;
   }
 }
-@media (min-width: 600px) and (max-width: 900px) {
+@media (min-width: 600px) and (max-width: 1180px),
+  (min-width: 600px) and (pointer: coarse) {
   .film-card {
-    grid-template-columns: 34% 1fr;
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
     padding: 0.875rem 1.25rem 1rem 0.875rem;
   }
   .film-card-name {
@@ -1498,22 +1526,37 @@ body {
   }
 }
 
-/* Short phones (iPhone SE and similar): tighten the card so the copy and the
-   email link stay on the first screen. */
-@media (max-width: 900px) and (max-height: 720px) {
-  .film-card {
-    row-gap: 0.375rem;
+/* The phone reference calls for the card itself to be tall and narrow. */
+@media (max-width: 599px) {
+  .film-profile {
+    min-height: 26rem;
   }
-  .film-card-where {
-    display: none;
+  .film-card {
+    width: min(100%, 18rem);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem 0.875rem;
+  }
+  .film-portrait {
+    aspect-ratio: 4 / 3;
+  }
+  .film-portrait img {
+    object-fit: cover;
+    object-position: 50% 25%;
+  }
+  .film-card-body {
+    padding: 0;
+  }
+  .film-card-name {
+    font-size: 1.5rem;
+  }
+  .film-where.film-card-where {
+    min-height: 4.25em;
   }
   .film-card-foot {
-    gap: 0.75rem;
-  }
-  .film-headline {
-    font-size: clamp(1.5rem, min(6.6vw, 4.6vh), 2.25rem);
-  }
-  .film-bottom {
-    padding-bottom: 3rem;
+    padding: 0;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 }

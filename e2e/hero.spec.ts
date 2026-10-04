@@ -23,19 +23,27 @@ test("hero plays the harbor loop behind the headline", async ({ page }) => {
     "src",
     "/hero/main-homepage-loop.web.mp4",
   );
-  await expect(page.locator(".film-headline")).toHaveText("Messy in. Useful out.");
+  await expect(page.locator(".film-headline")).toHaveText(
+    "I make the messy bits make sense.",
+  );
   await expect(page.locator(".film-card-name")).toHaveText("Rafiul Haider");
   await expect(page.locator(".film-cta a")).toHaveAttribute(
     "href",
-    "mailto:rafiul.haider@pace.edu",
+    "https://mail.google.com/mail/?view=cm&fs=1&to=rafiul.haider%40pace.edu",
   );
-  // Fact lines type out in the card once the film blurs, then rotate.
-  await expect(page.locator(".film-where")).toContainText("Data Science", {
-    timeout: 20000,
-  });
-  await expect(page.locator(".film-where")).toContainText("Secure Safer", {
-    timeout: 25000,
-  });
+  // Personality lines type out in the card once the film blurs, then rotate.
+  await expect(page.locator(".film-where")).toContainText(
+    "Curiosity, with a spreadsheet.",
+    {
+      timeout: 20000,
+    },
+  );
+  await expect(page.locator(".film-where")).toContainText(
+    "Less busywork. More brainwork.",
+    {
+      timeout: 25000,
+    },
+  );
   await expect(
     video.evaluate((v: HTMLVideoElement) => v.playbackRate),
   ).resolves.toBe(1);
@@ -56,6 +64,28 @@ test("hero keeps its poster fallback and single H1", async ({ page }) => {
     /main-homepage-poster/,
   );
   await expect(page.locator("h1")).toHaveCount(1);
+  await page.setViewportSize({ width: 375, height: 667 });
+  await expect(page.locator(".film-portrait img")).toHaveJSProperty(
+    "currentSrc",
+    "http://localhost:3000/album/ward-rain-wide-4k.jpg",
+  );
+  const dimensions = await page.locator(".film-portrait").boundingBox();
+  expect(dimensions!.width / dimensions!.height).toBeCloseTo(4 / 3, 1);
+});
+
+test("the profile and typing appear even when the background video fails", async ({
+  page,
+}) => {
+  await page.route("**/hero/main-homepage-loop.web.*", (route) =>
+    route.abort(),
+  );
+  await dismissLoader(page);
+  await expect(page.locator(".film-card")).toBeVisible({ timeout: 20000 });
+  await expect(page.locator(".film-where")).toContainText(
+    "Curiosity, with a spreadsheet.",
+    { timeout: 20000 },
+  );
+  await expect(page.locator(".film-cta a")).toBeVisible();
 });
 
 test("video blurs out and copy rises, then stays blurred", async ({ page }) => {
@@ -83,7 +113,7 @@ test("video blurs out and copy rises, then stays blurred", async ({ page }) => {
   await expect(video).toHaveCSS("filter", /blur\(12px\)/);
 });
 
-test("nav points at real destinations, page never scrolls", async ({
+test("nav points at real destinations and the phone layout stays readable", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -99,20 +129,68 @@ test("nav points at real destinations, page never scrolls", async ({
   ).toHaveAttribute("href", /doi\.org/);
   await expect(page.locator('.film-nav a:has-text("Contact")')).toHaveAttribute(
     "href",
-    "mailto:rafiul.haider@pace.edu",
+    "https://mail.google.com/mail/?view=cm&fs=1&to=rafiul.haider%40pace.edu",
   );
-  // Single screen: nothing below the fold on desktop or phone.
+  await expect(page.locator(".film-bottom")).toBeVisible({ timeout: 20000 });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollHeight - innerHeight,
+    ),
+  ).toBeLessThanOrEqual(1);
+  // Desktop stays a single screen. Phones can scroll, with no sideways overflow.
   for (const size of [
-    { width: 1440, height: 900 },
     { width: 390, height: 844 },
+    { width: 320, height: 568 },
+    { width: 375, height: 667 },
+    { width: 414, height: 896 },
+    { width: 344, height: 882 },
+    { width: 720, height: 882 },
+    { width: 844, height: 390 },
+    { width: 768, height: 1024 },
+    { width: 1032, height: 1376 },
+    { width: 912, height: 1368 },
   ]) {
     await page.setViewportSize(size);
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollHeight - window.innerHeight,
-    );
-    expect(overflow).toBeLessThanOrEqual(1);
+    const layout = await page.evaluate(() => ({
+      horizontalOverflow:
+        document.documentElement.scrollWidth - window.innerWidth,
+      bodySize: parseFloat(
+        getComputedStyle(document.querySelector(".film-sub")!).fontSize,
+      ),
+    }));
+    expect(layout.horizontalOverflow).toBeLessThanOrEqual(1);
+    expect(layout.bodySize).toBeGreaterThanOrEqual(16);
+    await expect(page.locator(".film-card-where")).toBeVisible();
+    await page.locator(".film-cta a").scrollIntoViewIfNeeded();
+    await expect(page.locator(".film-cta a")).toBeInViewport();
   }
   expect(errors).toEqual([]);
+});
+
+test("wide touch tablets keep the profile above the introduction", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  for (const size of [
+    { width: 1376, height: 1032 },
+    { width: 1368, height: 912 },
+  ]) {
+    await page.setViewportSize(size);
+    const card = (await page.locator(".film-card").boundingBox())!;
+    const copy = (await page.locator(".film-bottom").boundingBox())!;
+    expect(card.y + card.height).toBeLessThan(copy.y);
+    expect(Math.abs(card.x + card.width / 2 - size.width / 2)).toBeLessThan(2);
+    await expect(page.locator(".film-card-where")).toBeVisible();
+    await page.locator(".film-cta a").scrollIntoViewIfNeeded();
+    await expect(page.locator(".film-cta a")).toBeInViewport();
+  }
+  await context.close();
 });
 
 test("reduced motion shows the still poster, not the video", async ({

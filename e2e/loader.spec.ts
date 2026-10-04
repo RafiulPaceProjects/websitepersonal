@@ -31,7 +31,23 @@ test("loader sits centered and inside a quarter of the viewport height", async (
   const box = (await figure.boundingBox())!;
   const viewport = page.viewportSize()!;
 
-  const centerX = box.x + box.width / 2;
+  for (const selector of [
+    ".intro-walk",
+    ".intro-line",
+    ".intro-status canvas",
+  ]) {
+    const aligned = (await page.locator(selector).boundingBox())!;
+    expect(
+      Math.abs(aligned.x + aligned.width / 2 - viewport.width / 2),
+    ).toBeLessThan(2);
+  }
+  const group = (await page.locator(".intro-walk").boundingBox())!;
+  expect(
+    Math.abs(group.y + group.height / 2 - viewport.height / 2),
+  ).toBeLessThan(2);
+
+  // The clip is shifted 7.9% to center the person, who stands left of its midpoint.
+  const centerX = box.x + box.width * (0.5 - 0.079);
   const centerY = box.y + box.height / 2;
   expect(Math.abs(centerX - viewport.width / 2)).toBeLessThan(4);
   // The text line sits above the figure, so the figure is a little below center.
@@ -46,7 +62,9 @@ test("the loading line rotates through its phrases", async ({ page }) => {
   await page.goto("/");
   const line = page.locator(".intro-line");
   await expect(line).toHaveText("taking the scenic route...");
-  await expect(line).not.toHaveText("taking the scenic route...", { timeout: 4000 });
+  await expect(line).not.toHaveText("taking the scenic route...", {
+    timeout: 4000,
+  });
 });
 
 test("the wind gust draws its lines during the loader", async ({ page }) => {

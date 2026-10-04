@@ -8,13 +8,15 @@ import { ArrowUpRight } from "lucide-react";
 import { TypeLines } from "@/components/type-lines";
 import { profile, publication, work } from "@/content/site";
 
-// Short rotating lines: real context from content/site.ts, with a little personality.
+const CONTACT_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(profile.email)}`;
+
+// A little personality beside the factual profile; never invented results.
 const WHERE_SETS = [
-  ["Data Science at Pace. Big on “why?”"],
-  ["Secure Safer. Less busywork."],
+  ["Curiosity, with a spreadsheet."],
+  ["Less busywork. More brainwork."],
   ["Weak Wi-Fi. Strong curiosity."],
-  ["Less spreadsheet spaghetti."],
-  ["More “got it.” Less “wait, what?”"],
+  ["Good questions. Then better ones."],
+  ["Turning “wait, what?” into “got it.”"],
 ] as const;
 
 // Screen 0: the harbor loop runs full-bleed behind the hero UI.
@@ -102,9 +104,9 @@ export function HeroFilm() {
         });
     }
 
-    const onTime = () => {
+    let arrival: gsap.core.Timeline | null = null;
+    const reveal = () => {
       if (blurred || reduce) return;
-      if (video.currentTime < BLUR_AT) return;
       blurred = true;
       // One clock for the whole arrival: blur and warmth ease in together (the
       // cool harbor dawn turning toward the lamp-lit photo), the UI fades up
@@ -114,6 +116,7 @@ export function HeroFilm() {
           window.dispatchEvent(new CustomEvent("film:blurred"));
         },
       });
+      arrival = tl;
       tl.to(video, { filter: FILTER_TO, duration: 4, ease: "sine.inOut" }, 0);
       if (warmRef.current)
         tl.to(
@@ -151,6 +154,11 @@ export function HeroFilm() {
           2.4,
         );
     };
+    const onTime = () => {
+      if (video.currentTime >= BLUR_AT) reveal();
+    };
+    // Low-power mode or a failed video must never strand the phone UI.
+    const revealTimer = window.setTimeout(reveal, 6500);
 
     // Card hover (fine pointers only): a few degrees of tilt toward the cursor,
     // a slight lift, a light sheen that follows the pointer, a slow push-in on
@@ -202,11 +210,15 @@ export function HeroFilm() {
       card.addEventListener("pointerleave", onLeave);
     }
     video.addEventListener("timeupdate", onTime);
+    video.addEventListener("error", reveal);
     return () => {
+      window.clearTimeout(revealTimer);
+      arrival?.kill();
       driftTween?.kill();
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       video.removeEventListener("timeupdate", onTime);
+      video.removeEventListener("error", reveal);
       card?.removeEventListener("pointermove", onMove);
       card?.removeEventListener("pointerenter", onEnter);
       card?.removeEventListener("pointerleave", onLeave);
@@ -253,71 +265,92 @@ export function HeroFilm() {
           <nav className="film-nav" aria-label="Elsewhere">
             <a href={work[0].link ?? publication.doi}>Work</a>
             <a href={publication.doi}>Background</a>
-            <a href={`mailto:${profile.email}`}>Contact</a>
+            <a
+              href={CONTACT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Contact Rafiul in Gmail (opens in new tab)"
+            >
+              Contact
+            </a>
           </nav>
         </header>
         {/* Card with the lamp-lit still; arrives once the film blurs and warms.
             Upper right under the nav on desktop, in flow under the nav on phones. */}
-        <article ref={cardRef} className="film-card">
-          <figure ref={photoRef} className="film-portrait">
-            <Image
-              src={asset("/album/ward-rain-tall-4k.jpg")}
-              alt="Rafiul at a rainy window, lit by a desk lamp"
-              fill
-              quality={90}
-              sizes="(max-width: 900px) 45vw, (max-width: 1180px) 480px, 36vw"
-              loading="eager"
-              fetchPriority="high"
-            />
-          </figure>
-          <div className="film-card-body">
-            <p className="film-card-label">{profile.location}</p>
-            <h2 className="film-card-name">{profile.name}</h2>
-            <p className="film-card-title">{profile.role}</p>
-            {/* The rotating "messy in, decisions out" lines live in the card. */}
-            <TypeLines
-              sets={WHERE_SETS}
-              className="film-where film-card-where"
-            />
-          </div>
-          <footer className="film-card-foot">
-            <a
-              href={profile.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Rafiul on LinkedIn (opens in new tab)"
-            >
-              LinkedIn
-              <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
-            </a>
-            <a
-              href={profile.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Rafiul on Instagram (opens in new tab)"
-            >
-              Instagram
-              <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
-            </a>
-            <a
-              href={profile.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Rafiul on GitHub (opens in new tab)"
-            >
-              GitHub
-              <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
-            </a>
-          </footer>
-        </article>
+        <div className="film-profile">
+          <article ref={cardRef} className="film-card">
+            <figure ref={photoRef} className="film-portrait">
+              <picture>
+                <source
+                  media="(max-width: 599px)"
+                  srcSet={asset("/album/ward-rain-wide-4k.jpg")}
+                />
+                <Image
+                  src={asset("/album/ward-rain-tall-4k.jpg")}
+                  alt="Rafiul at a rainy window, lit by a desk lamp"
+                  fill
+                  quality={90}
+                  sizes="(max-width: 900px) 45vw, (max-width: 1180px) 480px, 36vw"
+                  loading="eager"
+                  fetchPriority="high"
+                />
+              </picture>
+            </figure>
+            <div className="film-card-body">
+              <p className="film-card-label">{profile.location}</p>
+              <h2 className="film-card-name">{profile.name}</h2>
+              <p className="film-card-title">{profile.role}</p>
+              {/* Short personality lines, with a fixed space to avoid layout shifts. */}
+              <TypeLines
+                sets={WHERE_SETS}
+                className="film-where film-card-where"
+              />
+            </div>
+            <footer className="film-card-foot">
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Rafiul on LinkedIn (opens in new tab)"
+              >
+                LinkedIn
+                <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
+              </a>
+              <a
+                href={profile.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Rafiul on Instagram (opens in new tab)"
+              >
+                Instagram
+                <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
+              </a>
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Rafiul on GitHub (opens in new tab)"
+              >
+                GitHub
+                <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
+              </a>
+            </footer>
+          </article>
+        </div>
         <div className="film-bottom" ref={copyRef}>
-          <h1 className="film-headline">Messy in. Useful out.</h1>
+          <h1 className="film-headline">I make the messy bits make sense.</h1>
           <p className="film-sub">
-            Data science at Pace. Research, writing, and workflows in practice.
-            Based in Queens.
+            Data science at Pace. A soft spot for tricky problems.
           </p>
           <p className="film-cta">
-            <a href={`mailto:${profile.email}`}>Let&apos;s make it useful ↗</a>
+            <a
+              href={CONTACT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Email Rafiul in Gmail (opens in new tab)"
+            >
+              Let&apos;s talk ↗
+            </a>
           </p>
         </div>
       </div>
