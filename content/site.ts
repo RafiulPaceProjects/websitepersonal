@@ -6,6 +6,8 @@ export const profile = {
   location: "Woodside, Queens, NY",
   email: "rafiul.haider@pace.edu",
   linkedin: "https://www.linkedin.com/in/rafiul-haider",
+  instagram: "https://www.instagram.com/rafiulhaider_/",
+  github: "https://github.com/RafiulPaceProjects",
   tagline: "Analysis you can act on.",
   intro:
     "I turn messy inputs (data, research, half-formed ideas) into things people can use: clean analysis, clear writing, working systems.",

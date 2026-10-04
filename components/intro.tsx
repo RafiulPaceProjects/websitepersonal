@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import gsap from "gsap";
+import { asset } from "@/lib/env";
+import { ThinkingOrb } from "thinking-orbs";
 
 // Rafiul walking his short path while the site loads (Motion-Drafts.md, Package 1b).
 // The clip is the Kling walk loop cropped to the figure; the wind gust and the
 // loading line are live so they stay crisp. Day = black on white, night = inverted.
-const MIN_MS = 2600; // long enough for one gust
-const MAX_MS = 3200; // game-menu falls back at 3500ms
+const MIN_MS = 4600; // long enough for the slow gust and stride to breathe
+const MAX_MS = 5600; // hard cap; the page behind is a clean slate
 
 const LINES = [
   "wandering through...",
@@ -99,20 +101,20 @@ export function Intro() {
         i = (i + 1) % LINES.length;
         gsap
           .timeline()
-          .to(line, { opacity: 0, y: -4, duration: 0.25, ease: "power1.in" })
+          .to(line, { opacity: 0, y: -3, duration: 0.4, ease: "power1.in" })
           .add(() => {
             line.textContent = LINES[i];
           })
           .fromTo(
             line,
             { opacity: 0, y: 4 },
-            { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
           );
-      }, 1100);
+      }, 1700);
 
-      // One sudden gust: start -> middle -> end keyframes, then it dissipates.
+      // One slow gust: start -> middle -> end keyframes, then it dissipates.
       const paths = Array.from(windRef.current?.querySelectorAll("path") ?? []);
-      const tl = gsap.timeline({ delay: 0.7 });
+      const tl = gsap.timeline({ delay: 1.0 });
       paths.forEach((path, k) => {
         const length = path.getTotalLength();
         const s: Stroke = { tail: 0, head: 0 };
@@ -124,13 +126,13 @@ export function Intro() {
         };
         draw();
         const t0 = WIND[k].lag;
-        tl.to(path, { opacity: 1, duration: 0.12 }, t0)
+        tl.to(path, { opacity: 1, duration: 0.2 }, t0)
           .to(
             s,
             {
               tail: KEYS.start[0],
               head: KEYS.start[1],
-              duration: 0.22,
+              duration: 0.35,
               ease: "power3.out",
               onUpdate: draw,
             },
@@ -141,39 +143,56 @@ export function Intro() {
             {
               tail: KEYS.middle[0],
               head: KEYS.middle[1],
-              duration: 0.38,
+              duration: 0.6,
               ease: "power2.in",
               onUpdate: draw,
             },
-            t0 + 0.22,
+            t0 + 0.35,
           )
           .to(
             s,
             {
               tail: KEYS.end[0],
               head: KEYS.end[1],
-              duration: 0.55,
+              duration: 0.9,
               ease: "power2.out",
               onUpdate: draw,
             },
-            t0 + 0.6,
+            t0 + 0.95,
           )
           .to(
             s,
-            { tail: 1, duration: 0.45, ease: "power1.in", onUpdate: draw },
-            t0 + 1.15,
+            { tail: 1, duration: 0.7, ease: "power1.in", onUpdate: draw },
+            t0 + 1.85,
           )
-          .to(path, { opacity: 0, duration: 0.4, ease: "power1.in" }, t0 + 1.2);
+          .to(path, { opacity: 0, duration: 0.6, ease: "power1.in" }, t0 + 1.9);
       });
-      // He leans into the headwind, then springs back as the weight settles.
+      // Walk feel, the way a human stride works: each step the hips shift over
+      // the planted foot and the body rises slightly as weight passes over it,
+      // then settles as the next foot takes the load. A small vertical bob with
+      // a faint lateral sway reads as hinges working without bending the clip.
       tl.to(
         figureRef.current,
-        { skewX: -2.4, scaleY: 0.992, duration: 0.3, ease: "power2.out" },
-        0.3,
+        {
+          y: -3,
+          x: 1.5,
+          rotation: 0.4,
+          duration: 0.45,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: 7,
+        },
+        0.2,
+      );
+      // The gust presses him half a step back; he yields, then walks out of it.
+      tl.to(
+        figureRef.current,
+        { x: "-=7", duration: 0.9, ease: "sine.inOut" },
+        1.0,
       ).to(
         figureRef.current,
-        { skewX: 0, scaleY: 1, duration: 1.3, ease: "elastic.out(1, 0.32)" },
-        0.78,
+        { x: "+=7", duration: 1.6, ease: "sine.out" },
+        1.9,
       );
 
       return () => window.clearInterval(rotate);
@@ -217,9 +236,18 @@ export function Intro() {
       aria-hidden="true"
     >
       <div className="intro-walk">
-        <p ref={lineRef} className="intro-line">
-          {LINES[0]}
-        </p>
+        <div className="intro-status">
+          <ThinkingOrb
+            state="breathing"
+            size={20}
+            speed={0.7}
+            theme="dark"
+            aria-label="Loading"
+          />
+          <p ref={lineRef} className="intro-line">
+            {LINES[0]}
+          </p>
+        </div>
         <div className="intro-figure">
           <div ref={figureRef} className="intro-lean">
             <video
@@ -229,10 +257,10 @@ export function Intro() {
               loop
               playsInline
               preload="auto"
-              poster="/loader/walk-poster.png"
+              poster={asset("/loader/walk-poster.png")}
             >
-              <source src="/loader/walk.webm" type="video/webm" />
-              <source src="/loader/walk.mp4" type="video/mp4" />
+              <source src={asset("/loader/walk.webm")} type="video/webm" />
+              <source src={asset("/loader/walk.mp4")} type="video/mp4" />
             </video>
           </div>
           <svg

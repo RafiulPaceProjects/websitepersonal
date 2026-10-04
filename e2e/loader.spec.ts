@@ -13,11 +13,12 @@ test("loader shows the walking figure and the loading line, then clears", async 
   const loader = page.locator(".intro");
   await expect(loader).toBeVisible();
   await expect(page.locator(".intro-video")).toBeVisible();
+  await expect(page.locator(".intro-status canvas")).toBeVisible();
   await expect(page.locator(".intro-line")).toHaveText(/\.\.\.$/);
   await expect(page.locator(".intro-wind path")).toHaveCount(5);
 
-  // Gone within its 3.2s cap (plus the fade).
-  await expect(loader).toHaveCount(0, { timeout: 6000 });
+  // Gone within its 5.6s cap (plus the fade).
+  await expect(loader).toHaveCount(0, { timeout: 9000 });
   expect(errors).toEqual([]);
 });
 
@@ -45,7 +46,7 @@ test("the loading line rotates through its phrases", async ({ page }) => {
   await page.goto("/");
   const line = page.locator(".intro-line");
   await expect(line).toHaveText("wandering through...");
-  await expect(line).not.toHaveText("wandering through...", { timeout: 2500 });
+  await expect(line).not.toHaveText("wandering through...", { timeout: 4000 });
 });
 
 test("the wind gust draws its lines during the loader", async ({ page }) => {
@@ -59,28 +60,40 @@ test("the wind gust draws its lines during the loader", async ({ page }) => {
           .evaluateAll((paths) =>
             paths.some((p) => Number(getComputedStyle(p).opacity) > 0.5),
           ),
-      { timeout: 2500 },
+      { timeout: 4000 },
     )
     .toBe(true);
 });
 
-test("click skips the loader and the homepage is usable", async ({ page }) => {
+test("click skips the loader and the page shell is usable", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(String(error)));
+
   await page.goto("/");
   await expect(page.locator(".intro")).toBeVisible();
   await page.locator(".intro").click();
   await expect(page.locator(".intro")).toHaveCount(0, { timeout: 2000 });
-  await expect(page.locator("h1")).toBeVisible();
+  // Clean slate: no sections behind the loader yet, just the empty page shell.
+  await expect(page.locator(".page")).toBeVisible();
+  expect(errors).toEqual([]);
 });
 
-test("night mode inverts the loader to white on black", async ({ browser }) => {
-  const context = await browser.newContext({ colorScheme: "dark" });
-  const page = await context.newPage();
-  await page.goto("/");
-  const loader = page.locator(".intro");
-  await expect(loader).toBeVisible();
-  await expect(loader).toHaveCSS("background-color", "rgb(0, 0, 0)");
-  await expect(page.locator(".intro-video")).toHaveCSS("filter", "invert(1)");
-  await context.close();
+test("loader stays white on black in light and dark schemes", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme });
+    const page = await context.newPage();
+    await page.goto("/");
+    const loader = page.locator(".intro");
+    await expect(loader).toBeVisible();
+    await expect(loader).toHaveCSS("background-color", "rgb(0, 0, 0)");
+    await expect(page.locator(".intro-video")).toHaveCSS("filter", "invert(1)");
+    await expect(page.locator(".intro-status canvas")).toBeVisible();
+    await context.close();
+  }
 });
 
 test("reduced motion skips the loader entirely", async ({ browser }) => {

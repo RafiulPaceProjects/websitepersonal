@@ -2,7 +2,9 @@
 const trimSlash = (value: string) => value.replace(/\/+$/, "");
 
 export const publicEnv = {
-  siteUrl: trimSlash(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  siteUrl: trimSlash(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  ),
   mediaBaseUrl: trimSlash(process.env.NEXT_PUBLIC_MEDIA_BASE_URL || ""),
   plausibleDomain: process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN || "",
 };
@@ -18,3 +20,8 @@ export function getContactEnv() {
   const from = process.env.CONTACT_FROM_EMAIL;
   return apiKey && to && from ? { apiKey, to, from } : null;
 }
+
+/** Prefixes a /public path with the deploy base path (GitHub Pages serves the
+ *  site under /websitepersonal). Empty locally, so dev paths are unchanged. */
+export const asset = (path: string) =>
+  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${path}`;
