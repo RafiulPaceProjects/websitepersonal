@@ -1,0 +1,32 @@
+{
+  "scanned_at": "2026-10-03",
+  "project_root": "portfolio",
+  "font_stack": {
+    "loaded": ["Geist", "Geist Mono"],
+    "source": "app/layout.tsx:2-13",
+    "conflict": "app/globals.css maps --font-sans to itself; verify it points to the Geist variable"
+  },
+  "palette": {
+    "source": "app/globals.css theme variables",
+    "summary": "shadcn base-nova neutral OKLCH tokens with light and dark variants"
+  },
+  "motion": {
+    "stance": "motion-selective",
+    "source": "package.json dependencies; app source scan",
+    "summary": "GSAP ^3.15.0 is installed but unused; Aceternity registry is available and no motion code is implemented"
+  },
+  "spacing": {
+    "source": "app/page.tsx:5-68",
+    "summary": "Starter route uses Tailwind utilities; shadcn adds radius and color theme tokens"
+  },
+  "framework": {
+    "name": "Next.js",
+    "version": "16.3.8",
+    "router": "App Router",
+    "react": "19.2.8",
+    "tailwind": "4.x",
+    "source": "package.json:13-32; app/layout.tsx:20-26"
+  },
+  "preserve": ["Next.js App Router", "React 19", "Tailwind CSS 4", "Geist font imports", "shadcn base-nova primitives"],
+  "introduce": ["portfolio-specific visual system", "planned page structure", "motion strategy", "project storytelling hierarchy"]
+}

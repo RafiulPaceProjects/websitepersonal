@@ -1,0 +1,65 @@
+/* Hallmark · genre: editorial · macrostructure: Marquee Hero · theme: Newsprint
+ * enrichment: none (typography only) · nav: N6 · footer: Ft1
+ * H1 knobs: size=xxl, alignment=left-bias, underlay=single-rule-below
+ * F3 knobs: columns=3 (name/outcome/period), rules=every-row, numbers=tabular
+ * C3 knobs: underline=solid, hover=thicken, arrow=arrow-north-east
+ * audience: recruiters + clients · use: get contacted/hired · tone: editorial
+ * pre-emit critique: P5 H4 E5 S4 R5 V5
+ */
+
+:root {
+  /* Ground: dark warm charcoal. Text: warm paper. Accent: bright ember. */
+  --color-paper: oklch(16% 0.02 25);
+  --color-paper-2: oklch(20% 0.025 28);
+  --color-paper-3: oklch(25% 0.03 30);
+  --color-rule: oklch(32% 0.03 30);
+  --color-rule-2: oklch(68% 0.035 40);
+  --color-muted: oklch(66% 0.03 38);
+  --color-neutral: oklch(78% 0.03 42);
+  --color-ink-2: oklch(86% 0.035 48);
+  --color-ink: oklch(92% 0.04 50);
+  --color-accent: oklch(66% 0.14 30);
+  --color-accent-ink: oklch(72% 0.12 32);
+  --color-focus: oklch(70% 0.16 30);
+
+  --font-display: var(--font-display-next), "Playfair Display", "Crimson Pro",
+    ui-serif, Georgia, serif;
+  --font-body: var(--font-body-next), "Crimson Pro", "Newsreader", ui-serif,
+    Georgia, serif;
+  --font-label: "Inter", ui-sans-serif, sans-serif;
+  --font-mono: var(--font-mono-next), "IBM Plex Mono", ui-monospace, monospace;
+
+  --display-weight: 700;
+  --display-style: normal;
+
+  --text-base: 1.0625rem;
+  --text-md: 1.1875rem;
+  --text-lg: 1.375rem;
+  --text-display: clamp(2.75rem, 5vw + 1rem, 5rem);
+  --text-marquee: clamp(4rem, 12vw, 11rem);
+
+  --tracking-display: -0.022em;
+  --tracking-label: 0.06em;
+
+  --lh-normal: 1.55;
+  --lh-relaxed: 1.65;
+
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+  --space-4xl: 6rem;
+
+  --page-gutter: clamp(1.25rem, 5vw, 4rem);
+  --measure: 58ch;
+
+  --rule-hair: 1px;
+  --rule-thick: 4px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-entrance: 700ms;
+}
