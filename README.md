@@ -13,13 +13,13 @@ Open `http://localhost:3000`. No `.env` file or environment variables are requir
 
 ## Useful commands
 
-| Command | Purpose |
-| --- | --- |
-| `npm run lint` | Run ESLint. |
-| `npm run format:check` | Check Prettier formatting. |
-| `npm run test:e2e` | Run Playwright homepage checks in desktop Chromium and mobile emulation. |
-| `npm run build` | Create a production build. |
-| `npm run start` | Serve a previously built app. |
+| Command                | Purpose                                                                  |
+| ---------------------- | ------------------------------------------------------------------------ |
+| `npm run lint`         | Run ESLint.                                                              |
+| `npm run format:check` | Check Prettier formatting.                                               |
+| `npm run test:e2e`     | Run Playwright homepage checks in desktop Chromium and mobile emulation. |
+| `npm run build`        | Create a production build.                                               |
+| `npm run start`        | Serve a previously built app.                                            |
 
 ## Where to make changes
 
