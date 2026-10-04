@@ -37,6 +37,8 @@ GSAP drives the film arrival, loader and profile-card feedback. A small CSS floa
 
 Run `npx playwright install chromium` once if the test browser is missing. Playwright starts the dev server automatically when needed. On failure, inspect `playwright-report/` and `test-results/`; use `npx playwright show-report` to open the report.
 
+CI uses Next's supported `--webpack` development option: the clean Linux runner hits a Turbopack Google-font query error before the page can compile. The production build and local development keep their existing bundler settings.
+
 ## Deploying
 
 Every push to `main` runs `.github/workflows/pages.yml`. Lint, TypeScript and the full Playwright suite must pass before the static export is built and published. Failed browser tests are uploaded as a GitHub Actions artifact for seven days.

@@ -21,7 +21,8 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
-    command: "npm run dev",
+    // The clean Linux runner hits a Turbopack next/font query error in dev.
+    command: process.env.CI ? "npm run dev -- --webpack" : "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
