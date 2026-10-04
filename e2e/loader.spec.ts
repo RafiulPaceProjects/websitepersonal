@@ -31,16 +31,18 @@ test("loader sits centered and inside a quarter of the viewport height", async (
   const box = (await figure.boundingBox())!;
   const viewport = page.viewportSize()!;
 
-  for (const selector of [
-    ".intro-walk",
-    ".intro-line",
-    ".intro-status canvas",
-  ]) {
+  for (const selector of [".intro-walk", ".intro-status"]) {
     const aligned = (await page.locator(selector).boundingBox())!;
     expect(
       Math.abs(aligned.x + aligned.width / 2 - viewport.width / 2),
     ).toBeLessThan(2);
   }
+  const orb = (await page.locator(".intro-status canvas").boundingBox())!;
+  const line = (await page.locator(".intro-line").boundingBox())!;
+  expect(orb.x + orb.width).toBeLessThan(line.x);
+  expect(
+    Math.abs(orb.y + orb.height / 2 - line.y - line.height / 2),
+  ).toBeLessThan(2);
   const group = (await page.locator(".intro-walk").boundingBox())!;
   expect(
     Math.abs(group.y + group.height / 2 - viewport.height / 2),
