@@ -8,13 +8,13 @@ import { ArrowUpRight } from "lucide-react";
 import { TypeLines } from "@/components/type-lines";
 import { profile, publication, work } from "@/content/site";
 
-// One fact per line, typed in the card and rotated. Facts only, from content/site.ts
-// and the vault (thesis: LAST-MILE-Screenplay.md).
+// Short rotating lines: real context from content/site.ts, with a little personality.
 const WHERE_SETS = [
-  ["Studying for an MSc in Data Science at Pace."],
-  ["CSR and IT support at Secure Safer since July 2024."],
-  ["Thesis: finding a phone indoors from weak Wi-Fi signals."],
-  ["Open to data analysis and research writing work."],
+  ["Data Science at Pace. Big on “why?”"],
+  ["Secure Safer. Less busywork."],
+  ["Weak Wi-Fi. Strong curiosity."],
+  ["Less spreadsheet spaghetti."],
+  ["More “got it.” Less “wait, what?”"],
 ] as const;
 
 // Screen 0: the harbor loop runs full-bleed behind the hero UI.
@@ -267,6 +267,7 @@ export function HeroFilm() {
               quality={90}
               sizes="(max-width: 900px) 45vw, (max-width: 1180px) 480px, 36vw"
               loading="eager"
+              fetchPriority="high"
             />
           </figure>
           <div className="film-card-body">
@@ -310,16 +311,13 @@ export function HeroFilm() {
           </footer>
         </article>
         <div className="film-bottom" ref={copyRef}>
-          <h1 className="film-headline">
-            I turn messy data and rough ideas into work people can use.
-          </h1>
+          <h1 className="film-headline">Messy in. Useful out.</h1>
           <p className="film-sub">
-            MSc Data Science student at Pace, based in Queens. I&apos;ve written
-            for a South Asian media platform, kept a home-care agency&apos;s
-            website running, and built client workflows for an insurance agency.
+            Data science at Pace. Research, writing, and workflows in practice.
+            Based in Queens.
           </p>
           <p className="film-cta">
-            <a href={`mailto:${profile.email}`}>Email me about a project</a>
+            <a href={`mailto:${profile.email}`}>Let&apos;s make it useful ↗</a>
           </p>
         </div>
       </div>

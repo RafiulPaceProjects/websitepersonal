@@ -480,6 +480,9 @@ body {
   display: grid;
   justify-items: center;
   gap: 0.75rem;
+  /* Optical centre: the clip has ~12% empty space under his feet, so drop the
+     group by half of that (6% of the figure's height = 3% of its width). */
+  transform: translateY(calc(min(17rem, 80vw) * 0.03));
 }
 .intro-status {
   display: flex;
@@ -863,19 +866,20 @@ body {
 /* Phone: a compact horizontal card under the nav so the headline stays on the
    first screen. Photo left (portrait crop), text right. */
 @media (max-width: 900px) {
-  /* Card sits right under the nav; the copy anchors to the bottom. */
+  /* The card floats centered in the space between the nav and the copy, so
+     it never crowds the nav and never leaves a hole above the headline. */
   .film-ui {
     justify-content: flex-start;
+    gap: 1rem;
   }
-  .film-bottom {
-    margin-top: auto;
+  .film-card {
+    margin-block: auto;
   }
   .film-card {
     position: relative;
     top: auto;
     right: auto;
     width: 100%;
-    margin-top: 1rem;
     grid-template-columns: 38% 1fr;
     grid-template-rows: auto auto;
     column-gap: 0.875rem;
@@ -1123,7 +1127,7 @@ body {
   /* Left edge anchored to the orb: every phrase starts the same distance
      from it, and the fixed width keeps the orb from ever shifting. */
   text-align: left;
-  width: 11rem;
+  width: 20ch; /* exactly the longest phrase, so the row centres on screen */
   min-height: 1.2em;
 }
 /* 2:1 crop of the walk loop, sized in rem so it scales with the root type size. */
@@ -1131,6 +1135,9 @@ body {
   position: relative;
   width: min(17rem, 80vw);
   aspect-ratio: 2 / 1;
+  /* He stands ~8% left of the crop's middle; shift the clip and its wind so
+     he sits on the screen's centre axis under the loading line. */
+  transform: translateX(7.9%);
 }
 .intro-lean {
   position: absolute;
@@ -1495,7 +1502,6 @@ body {
    email link stay on the first screen. */
 @media (max-width: 900px) and (max-height: 720px) {
   .film-card {
-    margin-top: 0.5rem;
     row-gap: 0.375rem;
   }
   .film-card-where {

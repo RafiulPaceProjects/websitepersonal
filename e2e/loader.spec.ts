@@ -45,8 +45,8 @@ test("loader sits centered and inside a quarter of the viewport height", async (
 test("the loading line rotates through its phrases", async ({ page }) => {
   await page.goto("/");
   const line = page.locator(".intro-line");
-  await expect(line).toHaveText("wandering through...");
-  await expect(line).not.toHaveText("wandering through...", { timeout: 4000 });
+  await expect(line).toHaveText("taking the scenic route...");
+  await expect(line).not.toHaveText("taking the scenic route...", { timeout: 4000 });
 });
 
 test("the wind gust draws its lines during the loader", async ({ page }) => {

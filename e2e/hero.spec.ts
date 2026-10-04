@@ -23,7 +23,7 @@ test("hero plays the harbor loop behind the headline", async ({ page }) => {
     "src",
     "/hero/main-homepage-loop.web.mp4",
   );
-  await expect(page.locator(".film-headline")).toContainText("messy data");
+  await expect(page.locator(".film-headline")).toHaveText("Messy in. Useful out.");
   await expect(page.locator(".film-card-name")).toHaveText("Rafiul Haider");
   await expect(page.locator(".film-cta a")).toHaveAttribute(
     "href",

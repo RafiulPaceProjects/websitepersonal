@@ -12,11 +12,11 @@ const MIN_MS = 4600; // long enough for the slow gust and stride to breathe
 const MAX_MS = 5600; // hard cap; the page behind is a clean slate
 
 const LINES = [
-  "wandering through...",
-  "packing the bag...",
-  "finding the road...",
-  "tuning the signal...",
-  "almost there...",
+  "taking the scenic route...",
+  "untangling a few things...",
+  "connecting the dots...",
+  "making room for ideas...",
+  "almost there. probably...",
 ];
 
 // Wind traced from the three keyframes (loader-wind-1-start / 2-middle / 3-end).
