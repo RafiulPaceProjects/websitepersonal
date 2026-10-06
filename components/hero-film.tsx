@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { asset } from "@/lib/env";
+import { loadMotionVideo } from "@/lib/video";
+import media from "@/content/media.json";
 import { ArrowUpRight } from "lucide-react";
 import { TypeLines } from "@/components/type-lines";
 import { profile, publication, work } from "@/content/site";
@@ -36,6 +38,16 @@ export function HeroFilm() {
   const warmRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // True when the open menu was pinned by click/tap/Enter rather than hover,
+  // so a click never closes a menu that hover just opened.
+  const pinnedRef = useRef(false);
+  // Forgiveness window: leaving the menu region waits 250 ms before closing,
+  // so a slow diagonal toward a link never snaps the menu shut.
+  const leaveTimer = useRef(0);
+  const cancelLeave = () => window.clearTimeout(leaveTimer.current);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -46,6 +58,9 @@ export function HeroFilm() {
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    // Do not attach sources or playback callbacks for the static presentation.
+    if (reduce) return;
+    loadMotionVideo(video);
 
     // The file itself is a forward-then-reverse palindrome, so the element
     // just loops; the blur ramp below fires once and holds for the visit.
@@ -255,6 +270,30 @@ export function HeroFilm() {
     };
   }, []);
 
+  // Work menu: close on outside click or Escape, returning focus to the button.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        pinnedRef.current = false;
+        setMenuOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        pinnedRef.current = false;
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
+
   return (
     <section className="film" aria-label="Chittagong harbor at dawn">
       <Image
@@ -263,7 +302,7 @@ export function HeroFilm() {
         alt=""
         aria-hidden="true"
         fill
-        priority
+        preload
         sizes="100vw"
       />
       <video
@@ -273,19 +312,13 @@ export function HeroFilm() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="none"
         poster={asset("/hero/main-homepage-poster.jpg")}
         aria-hidden="true"
         tabIndex={-1}
       >
-        <source
-          src={asset("/hero/main-homepage-loop.web.webm")}
-          type="video/webm"
-        />
-        <source
-          src={asset("/hero/main-homepage-loop.web.mp4")}
-          type="video/mp4"
-        />
+        <source data-src={asset(media.hero.webm)} type="video/webm" />
+        <source data-src={asset(media.hero.mp4)} type="video/mp4" />
       </video>
       <div ref={warmRef} className="film-warm" aria-hidden="true" />
       <div className="film-shade" aria-hidden="true" />
@@ -293,15 +326,71 @@ export function HeroFilm() {
       <div className="film-ui" ref={uiRef}>
         <header className="film-top">
           <nav className="film-nav" aria-label="Elsewhere">
-            <a href={work[0].link ?? publication.doi}>Work</a>
-            <a href={publication.doi}>Background</a>
+            <div
+              ref={menuRef}
+              className="film-menu film-nav-block film-nav-work"
+              onMouseEnter={() => {
+                cancelLeave();
+                if (
+                  window.matchMedia("(hover: hover) and (pointer: fine)")
+                    .matches
+                ) {
+                  setMenuOpen(true);
+                }
+              }}
+              onMouseLeave={() => {
+                if (
+                  window.matchMedia("(hover: hover) and (pointer: fine)")
+                    .matches &&
+                  !pinnedRef.current
+                ) {
+                  leaveTimer.current = window.setTimeout(() => {
+                    setMenuOpen(false);
+                  }, 250);
+                }
+              }}
+            >
+              <button
+                ref={menuButtonRef}
+                type="button"
+                className="film-menu-button"
+                aria-expanded={menuOpen}
+                aria-controls="work-menu"
+                onClick={() => {
+                  // A click never closes a menu that hover just opened; it
+                  // pins it open instead. A second click unpins and closes.
+                  cancelLeave();
+                  if (menuOpen && !pinnedRef.current) {
+                    pinnedRef.current = true;
+                    return;
+                  }
+                  pinnedRef.current = !menuOpen;
+                  setMenuOpen(!menuOpen);
+                }}
+              >
+                <span className="film-nav-label">Work</span>
+              </button>
+              {menuOpen && (
+                <ul id="work-menu" className="film-menu-list">
+                  {work.map((job) => (
+                    <li key={job.slug}>
+                      <a href={asset(`/work/${job.slug}`)}>{job.org}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <a className="film-nav-block" href={publication.doi}>
+              <span className="film-nav-label">Background</span>
+            </a>
             <a
+              className="film-nav-block"
               href={CONTACT_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Contact Rafiul in Gmail (opens in new tab)"
             >
-              Contact
+              <span className="film-nav-label">Contact</span>
             </a>
           </nav>
         </header>
@@ -313,7 +402,18 @@ export function HeroFilm() {
               <picture>
                 <source
                   media="(max-width: 599px)"
-                  srcSet={asset("/album/ward-rain-wide-4k.jpg")}
+                  type="image/webp"
+                  srcSet={media.portraitMobile
+                    .map(({ src, width }) => `${asset(src)} ${width}w`)
+                    .join(", ")}
+                  sizes="(max-width: 374px) calc(100vw - 89px), 270px"
+                />
+                <source
+                  type="image/webp"
+                  srcSet={media.portraitDesktop
+                    .map(({ src, width }) => `${asset(src)} ${width}w`)
+                    .join(", ")}
+                  sizes="(max-width: 1180px) 210px, 310px"
                 />
                 <Image
                   src={asset("/album/ward-rain-tall-4k.jpg")}

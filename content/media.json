@@ -1,0 +1,38 @@
+{
+  "portraitMobile": [
+    {
+      "src": "/media/portrait-mobile-480.98700b5e99e9.webp",
+      "width": 480
+    },
+    {
+      "src": "/media/portrait-mobile-960.c20613728225.webp",
+      "width": 960
+    },
+    {
+      "src": "/media/portrait-mobile-1440.66f795d157cc.webp",
+      "width": 1440
+    }
+  ],
+  "portraitDesktop": [
+    {
+      "src": "/media/portrait-desktop-480.93b5e6b9888a.webp",
+      "width": 480
+    },
+    {
+      "src": "/media/portrait-desktop-960.cd7a83231f59.webp",
+      "width": 960
+    },
+    {
+      "src": "/media/portrait-desktop-1428.1a34543523fc.webp",
+      "width": 1428
+    }
+  ],
+  "hero": {
+    "webm": "/media/harbor-loop.6e4ed17be9ef.webm",
+    "mp4": "/media/harbor-loop.9c96abf8a329.mp4"
+  },
+  "tindsLogo": {
+    "motion": "/media/tinds-logo-video.ec3e00c1cdd5.mp4",
+    "still": "/media/tinds-logo-still.c38ebfbd6c1d.webp"
+  }
+}

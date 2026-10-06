@@ -539,6 +539,8 @@ body {
   padding: 1.25rem clamp(1.25rem, 4vw, 3rem);
 }
 .film-top {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
@@ -578,11 +580,58 @@ body {
   text-decoration: none;
   opacity: 0.85;
 }
-.film-nav a:hover,
-.film-nav a:active {
+/* Nav blocks: the pill splits into three regions divided by hairlines, each
+   with its own hover personality. Targets stay 44px on touch. */
+.film-nav {
+  align-items: stretch;
+  padding: 0.375rem 0.625rem;
+}
+.film-nav-block {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.625rem 1rem;
+  border-radius: 999px;
+}
+.film-nav-block + .film-nav-block {
+  border-left: 1px solid rgb(255 255 255 / 0.14);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+/* One shared hover for every nav block: an amber marker grows under the
+   label. Same motion, same timing, whichever region is hot. */
+.film-nav-work .film-menu-button {
+  min-height: 0;
+}
+.film-nav-label {
+  position: relative;
+}
+.film-nav-label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.3em;
+  height: 2px;
+  background: #e3a55b;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.film-nav-block:hover .film-nav-label::after,
+.film-nav-block:active .film-nav-label::after,
+.film-nav-block:focus-within .film-nav-label::after {
+  transform: scaleX(1);
+}
+.film-nav-block:hover,
+.film-nav-block:active {
   opacity: 1;
-  text-decoration: underline;
-  text-underline-offset: 0.25em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .film-nav-label::after {
+    transition: none;
+  }
 }
 .film-bottom {
   max-width: 44rem;
@@ -1580,4 +1629,446 @@ body {
     justify-content: space-between;
     gap: 0.5rem;
   }
+}
+
+/* Work menu: a dropdown inside the nav pill, in the pill's own language.
+   Opens on hover (fine pointers) or on click/tap and keyboard. */
+.film-nav {
+  position: relative;
+}
+.film-menu {
+  position: relative;
+}
+/* Hover bridge: an invisible lip below the Work block meets the dropped
+   list, so crossing the visual gap never fires mouseleave. Absolute, so it
+   adds no height to the block. */
+.film-menu::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 0.75rem;
+}
+.film-menu-button {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.85;
+  min-height: 44px;
+}
+.film-menu-button:hover,
+.film-menu-button:active {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.film-menu-list {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  min-width: 15rem;
+  margin: 0;
+  padding: 0.5rem;
+  list-style: none;
+  border-radius: 16px;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(0 0 0 / 0.82);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.45);
+}
+.film-menu-list a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.375rem 0.875rem;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.film-menu-list a:hover,
+.film-menu-list a:focus-visible {
+  background: rgb(255 255 255 / 0.08);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .film-menu-list {
+    background: rgb(0 0 0 / 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+/* Small screens: anchor the list to the whole centered pill instead of the
+   narrow Work button, so it can never hang off the left viewport edge.
+   Long names wrap instead of overflowing. */
+@media (max-width: 640px) {
+  .film-menu {
+    position: static;
+  }
+  .film-menu-list {
+    min-width: min(16rem, calc(100vw - 2rem));
+  }
+  .film-menu-list a {
+    white-space: normal;
+    line-height: 1.4;
+  }
+}
+
+/* TINDS lane: portfolio dark shell outside, TINDS paper voice inside.
+   Lexend 500 sentence-case headings, Manrope body, red only on links,
+   kickers and the one CTA. Hairline rules separate rows, never cards. */
+.tinds {
+  background: #000;
+  color: #fff;
+  font-family: var(--font-tinds-body);
+}
+.tinds-hero {
+  position: relative;
+  overflow: clip;
+  display: grid;
+}
+.tinds-banners img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+.tinds-banners img.is-on {
+  opacity: 1;
+}
+.tinds-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 0.62);
+}
+.tinds-hero-inner {
+  position: relative;
+  max-width: 44rem;
+  margin-inline: auto;
+  width: 100%;
+  padding: 4rem clamp(1.25rem, 4vw, 3rem) 5rem;
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+.tinds-back {
+  margin: 0 0 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tinds-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.tinds-back a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.tinds-hero-inner img,
+.tinds-hero-inner video {
+  width: min(400px, 72vw);
+  height: auto;
+}
+.tinds-logo-still {
+  display: none;
+}
+.tinds-headline {
+  margin: 0;
+  font-family: var(--font-tinds-heading);
+  font-weight: 500;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.tinds-role {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+.tinds-subhead {
+  margin: 0;
+  font-family: var(--font-tinds-heading);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #e3a55b;
+}
+.tinds-paper {
+  background: #fffefa;
+  color: #3d3d3d;
+}
+.tinds-section {
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 3.5rem clamp(1.25rem, 4vw, 3rem);
+}
+.tinds-section + .tinds-section {
+  border-top: 1px solid #e8e4dd;
+}
+.tinds-section h2 {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-tinds-heading);
+  font-weight: 500;
+  font-size: 1.625rem;
+  color: #1f1f1f;
+}
+.tinds-section h2::before {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: #cf412b;
+  margin-bottom: 0.75rem;
+}
+.tinds-track + .tinds-track {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e8e4dd;
+}
+.tinds-track h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-tinds-heading);
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #1f1f1f;
+}
+.tinds-track p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.tinds-reel {
+  display: grid;
+  justify-items: center;
+}
+.tinds-reel + .tinds-reel {
+  margin-top: 2rem;
+}
+.tinds-reel .instagram-media {
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 540px !important;
+}
+.tinds-feature {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+.tinds-feature img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.tinds-feature figcaption,
+.tinds-strip figcaption {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #6f6f6f;
+}
+.tinds-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.tinds-section-head h2 {
+  margin: 0;
+}
+.tinds-carousel-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+.tinds-carousel-nav button {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 1px solid #e8e4dd;
+  background: transparent;
+  color: #cf412b;
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+.tinds-carousel-nav button:hover {
+  background: #cf412b;
+  border-color: #cf412b;
+  color: #fff;
+}
+.tinds-strip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.5rem;
+}
+.tinds-strip figure {
+  margin: 0;
+  flex: 0 0 82%;
+  scroll-snap-align: start;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+.tinds-strip img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.tinds-article + .tinds-article {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e8e4dd;
+}
+.tinds-article h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-tinds-heading);
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #1f1f1f;
+}
+.tinds-article h3 a {
+  color: #cf412b;
+  text-decoration: none;
+}
+.tinds-article h3 a:hover {
+  color: #b23623;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.tinds-article p {
+  margin: 0;
+  line-height: 1.8;
+}
+.tinds-foot {
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 4rem;
+  border-top: 1px solid #e8e4dd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tinds-foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #cf412b;
+  text-decoration: none;
+}
+.tinds-foot a:hover {
+  color: #b23623;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tinds-logo-motion {
+    display: none;
+  }
+  .tinds-logo-still {
+    display: block;
+  }
+  .tinds-banners img {
+    transition: none;
+  }
+}
+
+/* Work case pages: the film's dark room, one column of serif and mono. */
+.case {
+  background: #000;
+  color: #fff;
+  min-height: 100dvh;
+}
+.case-inner {
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 4rem clamp(1.25rem, 4vw, 3rem) 5rem;
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+.case-back {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.case-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+}
+.case-back a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.case-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: rgb(227 165 91 / 0.9);
+}
+.case-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.case-meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+.case-outcome {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  max-width: 38ch;
+}
+.case-proof {
+  margin: 0;
+  font-style: italic;
+  line-height: 1.6;
+  color: rgb(239 230 214 / 0.8);
+  border-left: 2px solid rgb(227 165 91 / 0.6);
+  padding-left: 1rem;
+}
+.case-visit {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
 }

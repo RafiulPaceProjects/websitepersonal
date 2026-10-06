@@ -15,6 +15,7 @@ export const profile = {
 
 export type WorkEntry = {
   org: string;
+  slug: string;
   role: string;
   period: string;
   place: string;
@@ -28,6 +29,7 @@ export type WorkEntry = {
 export const work: WorkEntry[] = [
   {
     org: "TINDS",
+    slug: "tinds",
     role: "Content Writer, Sales",
     period: "2021 – 2023",
     place: "Remote",
@@ -40,6 +42,7 @@ export const work: WorkEntry[] = [
   },
   {
     org: "EZ Living Home Care",
+    slug: "ez-living",
     role: "WordPress Website Maintenance",
     period: "2022 – 2023",
     place: "Remote",
@@ -51,6 +54,7 @@ export const work: WorkEntry[] = [
   },
   {
     org: "Secure Safer Insurance & Advocacy",
+    slug: "secure-safer",
     role: "CSR and IT Support",
     period: "July 2024 – now",
     place: "Remote → Queens, NY",

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { asset } from "@/lib/env";
+import { loadMotionVideo } from "@/lib/video";
 import { ThinkingOrb } from "thinking-orbs";
 
 // Rafiul walking his short path while the site loads (Motion-Drafts.md, Package 1b).
@@ -68,6 +69,7 @@ export function Intro() {
     const el = rootRef.current;
     if (!el || el.dataset.done === "1") return;
     el.dataset.done = "1";
+    el.querySelector("video")?.pause();
     window.dispatchEvent(new CustomEvent("intro:done"));
     document.body.style.overflow = "";
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -90,6 +92,8 @@ export function Intro() {
       finish();
       return;
     }
+    const video = el.querySelector("video");
+    if (video) loadMotionVideo(video);
     document.body.style.overflow = "hidden";
 
     const ctx = gsap.context(() => {
@@ -256,11 +260,11 @@ export function Intro() {
               muted
               loop
               playsInline
-              preload="auto"
+              preload="none"
               poster={asset("/loader/walk-poster.png")}
             >
-              <source src={asset("/loader/walk.webm")} type="video/webm" />
-              <source src={asset("/loader/walk.mp4")} type="video/mp4" />
+              <source data-src={asset("/loader/walk.webm")} type="video/webm" />
+              <source data-src={asset("/loader/walk.mp4")} type="video/mp4" />
             </video>
           </div>
           <svg

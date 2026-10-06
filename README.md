@@ -24,6 +24,7 @@ Open `http://localhost:3000`. No `.env` file or environment variables are requir
 ## Where to make changes
 
 - `app/page.tsx` — homepage route and page composition.
+- `app/work/[tinds,ez-living,secure-safer]/page.tsx` — one case page per workplace; TINDS uses `components/tinds-case.tsx`, the others share `components/work-case.tsx`.
 - `app/layout.tsx` — shared document metadata, fonts, and stylesheet setup.
 - `app/globals.css` — global design tokens and base styles.
 - `public/` — static assets served from the site root.

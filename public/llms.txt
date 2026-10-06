@@ -1,0 +1,27 @@
+# Rafiul Haider — Analysis you can act on.
+
+> Portfolio of Rafiul Haider, MSc Data Science candidate at Pace University (expected 2027) in Queens, NY. Research, data analysis, and content that people can act on. Live at https://rafiulpaceprojects.github.io/websitepersonal/.
+
+## Contact
+
+- Email: rafiul.haider@pace.edu (site opens Gmail web compose)
+- LinkedIn: https://www.linkedin.com/in/rafiul-haider
+- Instagram: https://www.instagram.com/rafiulhaider_/
+- GitHub: https://github.com/RafiulPaceProjects
+
+## Work
+
+Case pages (linked from the homepage Work menu):
+- TINDS (Content Writer & B2B Relationship Manager, 2021–2023, Remote): https://rafiulpaceprojects.github.io/websitepersonal/work/tinds (also https://www.tinds.com)
+- EZ Living Home Care (WordPress Website Maintenance, 2022–2023, Remote): https://rafiulpaceprojects.github.io/websitepersonal/work/ez-living
+- Secure Safer Insurance & Advocacy (CSR and IT Support, July 2024–now, Remote → Queens, NY): https://rafiulpaceprojects.github.io/websitepersonal/work/secure-safer
+
+## Background
+
+- Pace University — MSc, Data Science, Expected 2027 (Pace Merit-Based Scholarship, 2025)
+- Bangladesh Army International University of Science and Technology — BSc, Electrical & Electronics Engineering, 2023
+- Publication: Trilateration-based indoor localization (Int. J. Inf. Technol., Springer, April 2024): https://doi.org/10.1007/s41870-024-01857-3
+
+## Full detail
+
+- Complete facts, copy, and links: https://rafiulpaceprojects.github.io/websitepersonal/llms-full.txt

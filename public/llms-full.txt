@@ -1,0 +1,114 @@
+# Rafiul Haider — full site reference (llms-full.txt)
+
+> Companion to llms.txt. Everything below is drawn from the live site's own
+> content (content/site.ts) and on-screen copy. No invented outcomes,
+> testimonials, or metrics. Live site:
+> https://rafiulpaceprojects.github.io/websitepersonal/
+
+## Profile
+
+- Name: Rafiul Haider
+- Tagline: Analysis you can act on.
+- Role: Data Science · Research · Content
+- Location: Woodside, Queens, NY
+- Intro: I turn messy inputs (data, research, half-formed ideas) into things
+  people can use: clean analysis, clear writing, working systems.
+
+## Homepage copy (verbatim)
+
+- Headline: I make the messy bits make sense.
+- Supporting sentence: Data science at Pace. A soft spot for tricky problems.
+- Contact link: Let's talk (opens Gmail web compose to rafiul.haider@pace.edu)
+- Rotating personality lines (in the profile card, none are achievements):
+  - Curiosity, with a spreadsheet.
+  - Less busywork. More brainwork.
+  - Weak Wi-Fi. Strong curiosity.
+  - Good questions. Then better ones.
+  - Turning "wait, what?" into "got it."
+- Loader lines: taking the scenic route... / untangling a few things... /
+  connecting the dots... / making room for ideas... / almost there. probably...
+
+## Contact
+
+- Email: rafiul.haider@pace.edu
+- Contact URL (what the site's "Let's talk" and "Contact" links open):
+  https://mail.google.com/mail/?view=cm&fs=1&to=rafiul.haider%40pace.edu
+- LinkedIn: https://www.linkedin.com/in/rafiul-haider
+- Instagram: https://www.instagram.com/rafiulhaider_/
+- GitHub: https://github.com/RafiulPaceProjects
+
+## Work
+
+Each entry has a case page reached from the homepage Work menu
+(hover or click/tap/Enter opens it; Escape closes it).
+
+### TINDS — Content Writer & B2B Relationship Manager (2021–2023, Remote)
+
+- Page: https://rafiulpaceprojects.github.io/websitepersonal/work/tinds (Lexend/Manrope, TINDS red and warm paper; smooth MP4 logo, four selected stories with real publication graphics, writing and Canva visual-design credits, responsibilities, optional Instagram previews, contact and next-case navigation)
+
+- Rafiul confirmed writing the four selected stories and designing their visuals in Canva.
+- Wrote diaspora stories and helped sell the promotion packages behind the platform.
+- Seven reel links, one featured post and three gallery-post links remain accessible.
+  Instagram scripts load only after a visitor requests a preview.
+- Proof: Diaspora storytelling and brand promotion packages.
+- Link: https://www.tinds.com
+
+### EZ Living Home Care — WordPress Website Maintenance (2022–2023, Remote)
+
+- Page: https://rafiulpaceprojects.github.io/websitepersonal/work/ez-living
+
+- Kept the agency's website accurate and online: content, uptime, and
+  announcements.
+- Proof: Website upkeep for a New York home-care agency.
+
+### Secure Safer Insurance & Advocacy — CSR and IT Support (July 2024–now, Remote → Queens, NY)
+
+- Page: https://rafiulpaceprojects.github.io/websitepersonal/work/secure-safer
+
+- HighLevel specialist: workflows, automation, and client retention.
+- Proof: Client retention at a 5.0-star-rated Queens insurance agency.
+
+## Education
+
+- Pace University — MSc, Data Science, Expected 2027, Queens, New York.
+  Pace Merit-Based Scholarship, 2025.
+- Bangladesh Army International University of Science and Technology — BSc,
+  Electrical & Electronics Engineering, 2023 (GPA 3.28), Cumilla, Bangladesh.
+  UGC-listed, Bangladesh Army-administered private university (est. 2015).
+
+## Publication
+
+- Title: Trilateration-based indoor localization utilizing the matrix
+  completion method by probabilistic matrix factorization and stochastic
+  gradient
+- Journal: International Journal of Information Technology (Springer Nature,
+  Scopus Q2), published April 2024, Vol 17, pp. 5577-5590
+- Authors: Md. Nahidul Alam, Rafiul Haider, Imam Hossain Pipul, Fahim ul Haque
+- DOI: https://doi.org/10.1007/s41870-024-01857-3
+- Note: Final thesis project. RSSI-based positioning that fills gaps from
+  missing or noisy data, more reliable than KNN in obstructed rooms.
+
+## Skills
+
+- Research & data: Excel (cleaning, formulas) · analytics dashboards ·
+  Python (basic)
+- Web & content: WordPress CMS · JavaScript (basic) · C (basic) · SEO writing
+- Working with people: Client support · ticketing systems · GoHighLevel
+  (workflows, automation) · EZLynx · LAN/WAN setup · troubleshooting
+- Languages: English (fluent) · Bengali (fluent)
+
+## Leadership
+
+- BAIUST Global Affairs Council — Secretary of Foreign Affairs (2022–2024).
+  Ran logistics and hospitality for foreign delegations at Model UN programs
+  in Bangladesh.
+
+## Site notes for AI consumers
+
+- Single-screen cinematic homepage: a harbor video loop behind a profile card
+  (Chittagong harbor at dawn motif) with the copy above. One H1 (the
+  headline). Reduced-motion and no-video fallbacks keep all text readable.
+- Planned (not yet live): custom domain rafiulhaider.com on Vercel; the
+  long-form scroll film and Dispatch contact flow from the
+  Website-Master-Plan. Do not present planned pages as existing routes.
+- Source of truth for facts: portfolio/content/site.ts in the repo.

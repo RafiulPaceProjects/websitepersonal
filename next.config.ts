@@ -13,6 +13,22 @@ const nextConfig: NextConfig = {
     ? { output: "export" as const, basePath, trailingSlash: true }
     : {}),
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
+  // Fingerprinted delivery assets can be cached safely; Pages owns its headers.
+  ...(!pages
+    ? {
+        headers: async () => [
+          {
+            source: "/media/:path*",
+            headers: [
+              {
+                key: "Cache-Control",
+                value: "public, max-age=31536000, immutable",
+              },
+            ],
+          },
+        ],
+      }
+    : {}),
   images: {
     unoptimized: pages,
     formats: ["image/avif", "image/webp"],

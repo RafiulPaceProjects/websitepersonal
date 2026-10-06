@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Crimson_Pro, IBM_Plex_Mono } from "next/font/google";
+import {
+  Playfair_Display,
+  Crimson_Pro,
+  IBM_Plex_Mono,
+  Lexend,
+  Manrope,
+} from "next/font/google";
 import "./globals.css";
 import "./site.css";
 
@@ -22,6 +28,19 @@ const mono = IBM_Plex_Mono({
   weight: "400",
 });
 
+// TINDS lane: Lexend headings + Manrope body, scoped to the TINDS case page.
+const tindsHeading = Lexend({
+  variable: "--font-tinds-heading",
+  subsets: ["latin"],
+  weight: "500",
+});
+
+const tindsBody = Manrope({
+  variable: "--font-tinds-body",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "Rafiul Haider — Data Science, Research, Content",
   description:
@@ -36,7 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${mono.variable} ${tindsHeading.variable} ${tindsBody.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

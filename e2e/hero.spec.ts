@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import media from "../content/media.json";
 
 // Screen 0 hero (components/hero-film.tsx): harbor loop behind the UI.
 async function dismissLoader(page: Page) {
@@ -17,11 +18,11 @@ test("hero plays the harbor loop behind the headline", async ({ page }) => {
   await expect(video).toBeVisible();
   await expect(video.locator('source[type="video/webm"]')).toHaveAttribute(
     "src",
-    "/hero/main-homepage-loop.web.webm",
+    media.hero.webm,
   );
   await expect(video.locator('source[type="video/mp4"]')).toHaveAttribute(
     "src",
-    "/hero/main-homepage-loop.web.mp4",
+    media.hero.mp4,
   );
   await expect(page.locator(".film-headline")).toHaveText(
     "I make the messy bits make sense.",
@@ -65,10 +66,13 @@ test("hero keeps its poster fallback and single H1", async ({ page }) => {
   );
   await expect(page.locator("h1")).toHaveCount(1);
   await page.setViewportSize({ width: 375, height: 667 });
-  await expect(page.locator(".film-portrait img")).toHaveJSProperty(
-    "currentSrc",
-    "http://localhost:3000/album/ward-rain-wide-4k.jpg",
-  );
+  await expect
+    .poll(() =>
+      page
+        .locator(".film-portrait img")
+        .evaluate((img: HTMLImageElement) => img.currentSrc),
+    )
+    .toMatch(/\/media\/portrait-mobile-\d+\.[a-f0-9]+\.webp$/);
   const dimensions = await page.locator(".film-portrait").boundingBox();
   expect(dimensions!.width / dimensions!.height).toBeCloseTo(4 / 3, 1);
 });
@@ -76,9 +80,7 @@ test("hero keeps its poster fallback and single H1", async ({ page }) => {
 test("the profile and typing appear even when the background video fails", async ({
   page,
 }) => {
-  await page.route("**/hero/main-homepage-loop.web.*", (route) =>
-    route.abort(),
-  );
+  await page.route("**/media/harbor-loop.*", (route) => route.abort());
   await dismissLoader(page);
   await expect(page.locator(".film-card")).toBeVisible({ timeout: 20000 });
   await expect(page.locator(".film-where")).toContainText(
@@ -120,10 +122,10 @@ test("nav points at real destinations and the phone layout stays readable", asyn
   page.on("pageerror", (error) => errors.push(String(error)));
   await dismissLoader(page);
 
-  await expect(page.locator('.film-nav a:has-text("Work")')).toHaveAttribute(
-    "href",
-    "https://www.tinds.com",
-  );
+  // Work is a menu button now; its three destinations live in work.spec.ts.
+  await expect(page.locator(".film-nav .film-menu-button")).toHaveText("Work");
+  await page.locator(".film-nav .film-menu-button").click();
+  await expect(page.locator(".film-menu-list")).toBeVisible();
   await expect(
     page.locator('.film-nav a:has-text("Background")'),
   ).toHaveAttribute("href", /doi\.org/);
